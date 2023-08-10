@@ -7,7 +7,7 @@ import ViewMessages from './components/ViewMessages';
 import Body from './components/Body';
 import Nav from './components/Nav';
 import Register from './components/Register';
-import Me from './components/Me';
+import Me from './components/Me'; 
 import Logout from './components/Logout';
 import Contact from './components/Contact';
 import UserData from './components/UserData';
