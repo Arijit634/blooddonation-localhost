@@ -1,0 +1,63 @@
+.Userdata{
+    background-color: #fffffff8;
+    width: 100dvw;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+    .card{
+        margin: 5px;
+        background-color: #d93444;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        display: flex;
+        padding: 10px;
+        align-items: center;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform .5s;
+        &:hover{
+          transform: translateY(-10px);
+        }
+        // .header{
+        //   background-color: #d93444;
+        //   height: 80px;
+        // }
+        >img{
+          height: 100px;
+          border-radius: 50%;
+          width: 100px;
+          // margin-bottom: 80px;
+          background-size: cover;
+          border: 4px solid white;
+          
+        }
+        .footer{
+            border-radius: 10px;
+            background-color: white;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            // align-items: center;
+            justify-content: center;
+            border: 1px solid red;
+            div{    
+              >h3{
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                font-weight: 200;
+                font-size: 15px;
+                color: rgb(217, 52, 68);
+              }
+            }
+          }
+    }
+    .section{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        }
