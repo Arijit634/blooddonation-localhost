@@ -1,6 +1,6 @@
 Blood Donation App
 
-This repository contains the code for a Blood Donation App developed during my internship at Euphoria GenX. The app facilitates blood donation by connecting donors with recipients in need.
+This app facilitates blood donation by connecting donors directly with recipients in need.
 Features
 
     User Authentication: Secure user registration and login functionality.
