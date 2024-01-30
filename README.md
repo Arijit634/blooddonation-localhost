@@ -1,4 +1,4 @@
-![image](https://github.com/Arijit634/blooddonation-localhost/assets/101085005/7add4d23-bae8-4ae8-8d5e-72b17eae3134)![image](https://github.com/Arijit634/blooddonation-localhost/assets/101085005/5642960d-d4c2-4357-9db2-a1d5d642bae5)Blood Donation App
+Blood Donation App
 
 Summary:
 This app facilitates blood donation by connecting donors directly with recipients in need. Upon signing up, users can opt to be donors, joining a pool of potential donors for future requests. Conversely, if they wish to opt-out, updating their status is a straightforward process. When a donor accepts a blood request from a user in need, the donor's information is automatically dispatched to the requesting user enabling private coordination for the final donation details.
