@@ -72,11 +72,12 @@ const Nav = () => {
               <Search />
             </nav>
             <section>
-            <a href={'/admin'}>Details</a>
-            <a href={'/ViewMessages'}>Messages</a>
-            <Link to="/admin">
+            <Link to="/admin">Details</Link>
+            <Link to="/ViewMessages">Messages</Link>
+            {/* <Link to="/request-dashboard">Requests</Link> */}
+            {/* <Link to="/admin">
                 <button>Return to Panel</button>
-              </Link>
+              </Link> */}
               <Link to="/logout">
                 <button onClick={handleLogout}>Logout</button>
               </Link>
