@@ -1,32 +1,40 @@
 const express = require("express");
+const mongoose = require("mongoose");
 // const UserAll = require("../model/userScheme");
 const UserRegister = require("../model/RegScheme");
 const BloodRequestScheme = require("../model/BloodRequestScheme");
 const Authenticate = require("../middleware/authenticate");
 const router = express.Router();
+const nodemailer = require("nodemailer");
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   res.send("Hello Akash");
-})
-
+});
 
 //for registration
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   const { name, gmail, mobile, blood, pin, password, cpassword } = req.body;
   if (!name || !gmail || !mobile || !blood || !pin || !password || !cpassword) {
     return res.status(422).json({ message: "Filled properly" });
-  };
+  }
   try {
     const userExist = await UserRegister.findOne({ gmail: gmail });
     if (userExist) {
-      return res.status(422).json({ message: 'User already exist' })
+      return res.status(422).json({ message: "User already exist" });
     } else if (password != cpassword) {
-      return res.status(422).json({ message: 'password are not matching' })
-    }
-    else {
-      const user = new UserRegister({ name, gmail, mobile, blood, pin, password, cpassword });
+      return res.status(422).json({ message: "password are not matching" });
+    } else {
+      const user = new UserRegister({
+        name,
+        gmail,
+        mobile,
+        blood,
+        pin,
+        password,
+        cpassword,
+      });
       await user.save();
-      res.status(201).json({ message: "User Register Successfully" })
+      res.status(201).json({ message: "User Register Successfully" });
     }
   } catch (error) {
     console.log(error);
@@ -75,7 +83,7 @@ router.get("/logout", (req, res) => {
 router.post("/contact", Authenticate, async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
-    console.log(name, email, phone, message)
+    console.log(name, email, phone, message);
     if (!name || !phone || !email || !message) {
       return res.status(400).json({ message: "plz filled the contact form" });
     }
@@ -100,8 +108,8 @@ router.get("/getUser", Authenticate, async (req, res) => {
 });
 //userVerify
 router.get("/userVerify", Authenticate, async (req, res) => {
-  return res.status(201).json({ message: "User Verify" })
-})
+  return res.status(201).json({ message: "User Verify" });
+});
 module.exports = router;
 
 //for search
@@ -109,27 +117,34 @@ router.post("/search", Authenticate, async (req, res) => {
   const { pin, blood } = req.body;
 
   if (blood && !pin) {
-    const Data = await UserRegister.find({ blood: blood, donor_check: true, _id: { "$ne": req.userId } }, { "password": 0, "cpassword": 0, "date": 0, "messages": 0, "tokens": 0, "_id": 0 });
+    const Data = await UserRegister.find(
+      { blood: blood, donor_check: true, _id: { $ne: req.userId } },
+      { password: 0, cpassword: 0, date: 0, messages: 0, tokens: 0, _id: 0 }
+    );
     if (Data.length === 0) {
       return res.status(404).json({ Success: false });
     }
     return res.status(202).json(Data);
   } else if (!blood && pin) {
-    const Data = await UserRegister.find({ pin: pin, donor_check: true, _id: { "$ne": req.userId } }, { "password": 0, "cpassword": 0, "date": 0, "messages": 0, "tokens": 0, "_id": 0 });
+    const Data = await UserRegister.find(
+      { pin: pin, donor_check: true, _id: { $ne: req.userId } },
+      { password: 0, cpassword: 0, date: 0, messages: 0, tokens: 0, _id: 0 }
+    );
     if (Data.length === 0) {
       return res.status(404).json({ Success: false });
     }
     return res.status(202).json(Data);
   } else {
-    const Data = await UserRegister.find({ pin: pin, blood: blood, donor_check: true, _id: { "$ne": req.userId } }, { "password": 0, "cpassword": 0, "date": 0, "messages": 0, "tokens": 0, "_id": 0 });
+    const Data = await UserRegister.find(
+      { pin: pin, blood: blood, donor_check: true, _id: { $ne: req.userId } },
+      { password: 0, cpassword: 0, date: 0, messages: 0, tokens: 0, _id: 0 }
+    );
     if (Data.length === 0) {
       return res.status(404).json({ Success: false });
     }
     return res.status(202).json(Data);
   }
-
-
-})
+});
 
 //for update
 router.put("/me/update/:id", Authenticate, async (req, res) => {
@@ -144,7 +159,7 @@ router.put("/me/update/:id", Authenticate, async (req, res) => {
   }
   try {
     if (!Data) {
-      return res.status(404).json({ message: "User not found" })
+      return res.status(404).json({ message: "User not found" });
     } else {
       const Data = await UserRegister.findByIdAndUpdate(id, {
         name: name,
@@ -152,56 +167,127 @@ router.put("/me/update/:id", Authenticate, async (req, res) => {
         mobile: mobile,
         blood: blood,
         pin: pin,
-        donor_check: donor_check
+        donor_check: donor_check,
       });
       await Data.save();
       const User = await UserRegister.findById(id);
-      return res.status(201).json({ message: "User update Successfully", User });
+      return res
+        .status(201)
+        .json({ message: "User update Successfully", User });
     }
-
   } catch (error) {
     console.log(error);
   }
-})
+});
 
 router.post("/generateBloodRequest", Authenticate, async (req, res) => {
-  const { blood_group, pin_code, expiry_date, name, email, phone, message } = req.body;
+  const { blood_group, pin_code, expiry_date, name, email, phone, message } =
+    req.body;
 
   if (!blood_group || !pin_code || !expiry_date || !name || !email || !phone) {
     return res.status(422).json({ message: "Filled properly" });
   }
   try {
-    const Data = await BloodRequestScheme({ blood_group, pin_code, expiry_date, name, email, phone, message });
+    const Data = await BloodRequestScheme({
+      blood_group,
+      pin_code,
+      expiry_date,
+      name,
+      email,
+      phone,
+      message,
+    });
     await Data.save();
 
     return res.status(201).json({ message: "Request generated Successfully" });
   } catch (error) {
     console.log(error);
   }
-})
+});
 
 router.post("/getBloodRequestList", Authenticate, async (req, res) => {
-  const { blood_group, pin_code } = req.body;
+  const { blood_group, pin_code, status_filter } = req.body;
 
   try {
-
-    let filter = {}
+    let filter = {};
     if (blood_group != null) {
-      filter["blood_group"] = blood_group
+      filter["blood_group"] = blood_group;
     }
     if (pin_code != "") {
-      filter["pin_code"] = pin_code
+      filter["pin_code"] = pin_code;
     }
-
+    if (status_filter) {
+      filter["status"] = false;
+    }
     const Data = await BloodRequestScheme.find(filter);
 
-    return res.status(201).json({ message: "Request generated Successfully", data: Data });
+    return res
+      .status(201)
+      .json({ message: "Request generated Successfully", data: Data });
   } catch (error) {
     console.log(error);
   }
-})
+});
 
+router.post("/acceptBloodRequest", Authenticate, async (req, res) => {
+  const { bloodRequestId, acceptorId } = req.body;
 
+  if (!bloodRequestId || !acceptorId) {
+    return res.status(422).json({ message: "Filled properly" });
+  }
+  try {
+    let temp = new Date();
+    temp.setDate(temp.getDate() - 30);
+
+    const p = await BloodRequestScheme.find({
+      acceptorId: acceptorId,
+      acceptDate: {
+        $gte: temp,
+        $lte: new Date(),
+      },
+    });
+    if (p.length) {
+      return res.status(422).json({
+        message: "You have already accepted a request in the last month.",
+      });
+    }
+
+    const Data = await BloodRequestScheme.findByIdAndUpdate(bloodRequestId, {
+      acceptorId: new mongoose.Types.ObjectId(acceptorId),
+      status: true,
+      acceptDate: new Date(),
+    });
+    await Data.save();
+
+    let bloodRequestData = await BloodRequestScheme.findById(bloodRequestId);
+    let donorData = await UserRegister.findById(acceptorId);
+
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "arijitguin1357@gmail.com",
+        pass: "ucjy amkv dsqs gppc",
+      },
+    });
+
+    const mailOptions = {
+      from: "arijitguin1357@gmail.com",
+      to: bloodRequestData.email,
+      subject: "Blood Donation App - Donor Found",
+      text: `The Donor Details:
+      name: ${donorData.name}
+      gmail: ${donorData.gmail}
+      mobile: ${donorData.mobile}`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.messageId);
+
+    return res.status(201).json({ message: "Request accepted Successfully" });
+  } catch (error) {
+    console.log(error);
+  }
+});
 // router.get("/getAllUser", async(req,res)=>{
 //   try {
 //     const allUser = await UserRegister.find({});
@@ -225,5 +311,3 @@ router.post("/getBloodRequestList", Authenticate, async (req, res) => {
 //     console.log(error);
 //   }
 // });
-
-
